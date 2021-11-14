@@ -16,4 +16,7 @@ public class VerifiableClaimTags {
     public static String VERSION = "version";
     public static String TYPE = "type";
     public static String CREDENTIAL_SUBJECT = "credentialSubject";
+    public static String GIVEN_NAME = "givenName";
+    public static String FAMILY_NAME = "familyName";
+    public static String DATE_OF_BIRTH = "dob";
 }
