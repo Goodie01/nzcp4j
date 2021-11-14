@@ -3,6 +3,9 @@ package org.goodiemania.j4nzcp.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,6 +18,9 @@ import org.goodiemania.j4nzcp.exception.InvalidVersionException;
 import org.goodiemania.j4nzcp.exception.UnsupportedAlgorithmException;
 import org.goodiemania.j4nzcp.impl.entities.CwtPayload;
 import org.goodiemania.j4nzcp.impl.entities.ProtectedHeaders;
+import org.goodiemania.j4nzcp.impl.entities.VerifiableClaims;
+
+import static org.goodiemania.j4nzcp.impl.VerifiableClaimTags.*;
 
 public class VerifierImpl implements Verifier {
     private static final String payloadRegex = "(NZCP:\\/)([0-9]+)\\/([A-Za-z2-7=]+)";
@@ -57,9 +63,9 @@ public class VerifierImpl implements Verifier {
     private ProtectedHeaders decodeProtectedHeaders(final JsonNode headerNode) {
         try {
             JsonNode headerObject = CBOR_MAPPER.readTree(headerNode.binaryValue());
-            String kid = new String(headerObject.get(VerifiableClaimTags.KID.get()).binaryValue());
+            String kid = new String(headerObject.get(KID).binaryValue());
             String alg;
-            long algorithmTagValue = headerObject.get(VerifiableClaimTags.ALG.get()).longValue();
+            long algorithmTagValue = headerObject.get(ALG).longValue();
             if (algorithmTagValue == AlgorithmMapping.ES256.tag()) {
                 alg = AlgorithmMapping.ES256.algorithmName();
             } else {
@@ -75,17 +81,29 @@ public class VerifierImpl implements Verifier {
     private CwtPayload decodePayload(final JsonNode payloadNode) {
         try {
             JsonNode payloadBody = CBOR_MAPPER.readTree(payloadNode.binaryValue());
-            String iss = payloadBody.get(VerifiableClaimTags.ISS.get()).textValue();
-            long notBefore = payloadBody.get(VerifiableClaimTags.NBF.get()).longValue();
-            long expiry = payloadBody.get(VerifiableClaimTags.EXP.get()).longValue();
-            var uuid = payloadBody.get(VerifiableClaimTags.JTI.get()).binaryValue();
+            String iss = payloadBody.get(ISS).textValue();
+            long notBefore = payloadBody.get(NBF).longValue();
+            long expiry = payloadBody.get(EXP).longValue();
+            var uuid = payloadBody.get(JTI).binaryValue();
             String s = Hex.encodeHexString(uuid);
-            String jti = new String(payloadBody.get(VerifiableClaimTags.JTI.get()).binaryValue()); //TODO decoding this way is bad
+            String jti = new String(payloadBody.get(JTI).binaryValue()); //TODO decoding this way is bad
+            VerifiableClaims verifiableClaims = parseVerifiableClaims(payloadBody.get(VC));
 
-            return new CwtPayload(iss, null, null, jti, null);
+            return new CwtPayload(iss,
+                LocalDateTime.ofEpochSecond(notBefore, 0, ZoneOffset.ofHours(13)),
+                LocalDateTime.ofEpochSecond(expiry, 0, ZoneOffset.ofHours(13)),
+                jti,
+                verifiableClaims);
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    private VerifiableClaims parseVerifiableClaims(final JsonNode verifiableClaimsNode) {
+        JsonNode jsonNode = verifiableClaimsNode.get(CONTEXT);
+        jsonNode.size();
+
+        return new VerifiableClaims(null, null, null, null);
     }
 
     private String addPadding(final String base32Input) {

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.goodiemania</groupId>
-    <artifactId>j4nzcp</artifactId>
+    <artifactId>nzcp4j</artifactId>
     <version>0.1.0-SNAPSHOT</version>
 
     <properties>
