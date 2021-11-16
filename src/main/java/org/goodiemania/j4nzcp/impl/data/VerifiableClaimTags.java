@@ -1,4 +1,4 @@
-package org.goodiemania.j4nzcp.impl;
+package org.goodiemania.j4nzcp.impl.data;
 
 public class VerifiableClaimTags {
     private VerifiableClaimTags() {

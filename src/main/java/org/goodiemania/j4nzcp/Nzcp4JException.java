@@ -1,14 +1,14 @@
 package org.goodiemania.j4nzcp;
 
-public abstract class J4NzcpException extends Exception{
+public abstract class Nzcp4JException extends Exception{
     private String url;
 
-    public J4NzcpException(final String message, final String Url) {
+    public Nzcp4JException(final String message, final String Url) {
         super(message);
         url = Url;
     }
 
-    public J4NzcpException(final String message) {
+    public Nzcp4JException(final String message) {
         super(message);
     }
 
