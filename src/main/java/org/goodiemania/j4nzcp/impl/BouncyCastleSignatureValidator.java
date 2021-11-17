@@ -2,11 +2,9 @@ package org.goodiemania.j4nzcp.impl;
 
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.Buffer;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
@@ -17,7 +15,8 @@ import java.security.Signature;
 import java.security.spec.ECGenParameterSpec;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Base64;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.DERSequenceGenerator;
 import org.goodiemania.j4nzcp.Nzcp4JException;
 import org.goodiemania.j4nzcp.impl.entities.NewZealandCovidPass;
 import org.goodiemania.j4nzcp.impl.entities.PublicKeysDetails;
@@ -25,18 +24,13 @@ import org.goodiemania.j4nzcp.impl.key.KeySupplier;
 import org.goodiemania.j4nzcp.impl.key.UnirestKeySupplier;
 
 public class BouncyCastleSignatureValidator {
-    private static final byte[] SEQUENCE_TAG = new byte[]{0x30};
+    private static final byte SEQUENCE_TAG = 0x30;
+    private static final byte INTEGER_TAG = 0x02;
     private static final CBORMapper CBOR_MAPPER = new CBORMapper();
     private final KeySupplier keySupplier = new UnirestKeySupplier();
 
     public void validate(final NewZealandCovidPass covidPass) throws Nzcp4JException {
         PublicKeysDetails publicKeyDetails = keySupplier.getPublicKeyDetails(covidPass);
-
-
-        final String message = Base64.getEncoder().encodeToString(covidPass.headerValue())
-                + "."
-                + Base64.getEncoder().encodeToString(covidPass.payloadvalue());
-        final var signature = covidPass.signatureValue();
 
         try {
             KeyPairGenerator kg = KeyPairGenerator.getInstance("EC");
@@ -54,8 +48,9 @@ public class BouncyCastleSignatureValidator {
             ecdsaSign.initVerify(pubKey);
 
             byte[] messageHash = buildMessageHash(covidPass);
+            byte[] signature = convertConcatToDer(covidPass.signatureValue());
             ecdsaSign.update(messageHash);
-            boolean result = ecdsaSign.verify(convertConcatToDer(signature));
+            boolean result = ecdsaSign.verify(signature);
             System.out.println(result);
         } catch (Exception e) {
             throw new IllegalStateException(e);
@@ -66,7 +61,7 @@ public class BouncyCastleSignatureValidator {
         ArrayNode objectNode = CBOR_MAPPER.createArrayNode();
         objectNode.add("Signature1");
         objectNode.add(covidPass.headerValue());
-        objectNode.add(covidPass.weirdMiddleValue());
+        objectNode.add(new byte[]{});
         objectNode.add(covidPass.payloadvalue());
 
         byte[] bytes = CBOR_MAPPER.writeValueAsBytes(objectNode);
@@ -78,34 +73,21 @@ public class BouncyCastleSignatureValidator {
         return instance.digest(bytes);
     }
 
-    private static byte[] test(byte[] message) throws NoSuchAlgorithmException {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        return digest.digest(message);
-    }
-
-
     private static byte[] convertConcatToDer(byte[] concat) {
-        int len = concat.length / 2;
-        byte[] r = Arrays.copyOfRange(concat, 0, len);
-        byte[] s = Arrays.copyOfRange(concat, len, concat.length);
+        try {
+            int len = concat.length / 2;
+            byte[] r = Arrays.copyOfRange(concat, 0, len);
+            byte[] s = Arrays.copyOfRange(concat, len, concat.length);
 
-
-        ArrayList<byte[]> x = new ArrayList<>();
-        x.add(UnsignedInteger(r));
-        x.add(UnsignedInteger(s));
-
-        return Sequence(x);
-    }
-
-
-    private static byte[] Sequence(ArrayList<byte[]> members) {
-        byte[] y = ToBytes(members);
-        ArrayList<byte[]> x = new ArrayList<byte[]>();
-        x.add(SEQUENCE_TAG);
-        x.add(ComputeLength(y.length));
-        x.add(y);
-
-        return ToBytes(x);
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            DERSequenceGenerator derSequenceGenerator = new DERSequenceGenerator(outputStream);
+            derSequenceGenerator.addObject(new ASN1Integer(r));
+            derSequenceGenerator.addObject(new ASN1Integer(s));
+            derSequenceGenerator.close();
+            return outputStream.toByteArray();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
 
 
@@ -116,21 +98,6 @@ public class BouncyCastleSignatureValidator {
             return new byte[]{(byte) 0x81, (byte) x};
         }
         throw new IllegalStateException("Danger will robinson, danger");
-    }
-
-
-    private static byte[] ToBytes(ArrayList<byte[]> x) {
-        int l = 0;
-        l = x.stream().map((r) -> r.length).reduce(l, Integer::sum);
-
-        byte[] b = new byte[l];
-        l = 0;
-        for (byte[] r : x) {
-            System.arraycopy(r, 0, b, l, r.length);
-            l += r.length;
-        }
-
-        return b;
     }
 
     private static byte[] UnsignedInteger(byte[] i) {
