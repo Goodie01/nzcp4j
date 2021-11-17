@@ -3,9 +3,18 @@ package org.goodiemania.j4nzcp;
 public abstract class Nzcp4JException extends Exception{
     private String url;
 
-    public Nzcp4JException(final String message, final String Url) {
+    public Nzcp4JException(final String message, final String url) {
         super(message);
-        url = Url;
+        this.url = url;
+    }
+
+    public Nzcp4JException(String message, final String url, Throwable cause) {
+        super(message, cause);
+        this.url = url;
+    }
+
+    public Nzcp4JException(String message, Throwable cause) {
+        super(message, cause);
     }
 
     public Nzcp4JException(final String message) {

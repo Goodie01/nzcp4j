@@ -11,7 +11,7 @@ public class VerifierImpl implements Verifier {
     private static final RawStringExtractor RAW_STRING_EXTRACTOR = new RawStringExtractor();
     private static final CovidPassExtractor COVID_PASS_EXTRACTOR = new CovidPassExtractor();
     private static final CovidPassValidator COVID_PASS_VALIDATOR = new CovidPassValidator();
-    private static final SignatureValidator SIGNATURE_VALIDATOR = new SignatureValidator();
+    private static final BouncyCastleSignatureValidator SIGNATURE_VALIDATOR = new BouncyCastleSignatureValidator();
 
     @Override
     public void verify(final String nzcpCode) throws Nzcp4JException {
@@ -22,6 +22,7 @@ public class VerifierImpl implements Verifier {
             String cwtValue = extract.payload();
             NewZealandCovidPass pass = COVID_PASS_EXTRACTOR.extract(cwtValue);
             COVID_PASS_VALIDATOR.validate(pass);
+
             SIGNATURE_VALIDATOR.validate(pass);
             System.out.println("Lets do this");
         } else {

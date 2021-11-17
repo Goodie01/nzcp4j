@@ -37,12 +37,21 @@ public class CovidPassExtractor {
     private static final CBORMapper CBOR_MAPPER = new CBORMapper();
 
     public NewZealandCovidPass extract(final String cwtValue) {
-        byte[] decode = BASE32_ENCODER.decode(addPadding(cwtValue));
-        JsonNode cborObject = getInitialJsonNode(decode);
-        ProtectedHeaders protectedHeaders = decodeProtectedHeaders(cborObject.get(0));
-        Payload cwtPayload = decodePayload(cborObject.get(2));
+        try {
+            byte[] decode = BASE32_ENCODER.decode(addPadding(cwtValue));
+            JsonNode cborObject = getInitialJsonNode(decode);
+            byte[] headerValue = cborObject.get(0).binaryValue();
+            byte[] weirdMiddleValue = cborObject.get(1).binaryValue();
+            byte[] payloadValue = cborObject.get(2).binaryValue();
+            byte[] signatureValue = cborObject.get(3).binaryValue();
 
-        return new NewZealandCovidPass(protectedHeaders, cwtPayload);
+            ProtectedHeaders protectedHeaders = decodeProtectedHeaders(headerValue);
+            Payload cwtPayload = decodePayload(payloadValue);
+
+            return new NewZealandCovidPass(protectedHeaders, cwtPayload, headerValue, weirdMiddleValue, payloadValue, signatureValue);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     private String addPadding(final String base32Input) {
@@ -62,9 +71,9 @@ public class CovidPassExtractor {
         }
     }
 
-    private ProtectedHeaders decodeProtectedHeaders(final JsonNode headerNode) {
+    private ProtectedHeaders decodeProtectedHeaders(final byte[] headerNode) {
         try {
-            JsonNode headerObject = CBOR_MAPPER.readTree(headerNode.binaryValue());
+            JsonNode headerObject = CBOR_MAPPER.readTree(headerNode);
             String kid = new String(headerObject.get(KID).binaryValue());
             String alg;
             long algorithmTagValue = headerObject.get(ALG).longValue();
@@ -80,9 +89,9 @@ public class CovidPassExtractor {
         }
     }
 
-    private Payload decodePayload(final JsonNode payloadNode) {
+    private Payload decodePayload(final byte[] payloadValue) {
         try {
-            JsonNode payloadBody = CBOR_MAPPER.readTree(payloadNode.binaryValue());
+            JsonNode payloadBody = CBOR_MAPPER.readTree(payloadValue);
             String iss = payloadBody.get(ISS).textValue();
             long notBefore = payloadBody.get(NBF).longValue();
             long expiry = payloadBody.get(EXP).longValue();
