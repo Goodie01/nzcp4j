@@ -35,8 +35,6 @@ import org.goodiemania.j4nzcp.impl.key.KeySupplier;
 import org.goodiemania.j4nzcp.impl.key.UnirestKeySupplier;
 
 public class BouncyCastleSignatureValidator {
-    private static final byte SEQUENCE_TAG = 0x30;
-    private static final byte INTEGER_TAG = 0x02;
     private static final CBORMapper CBOR_MAPPER = new CBORMapper();
     private final KeySupplier keySupplier = new UnirestKeySupplier();
 
@@ -59,8 +57,10 @@ public class BouncyCastleSignatureValidator {
     }
 
     private PublicKey extractPublicKey(PublicKeysDetails publicKeyDetails) throws NoSuchAlgorithmException, InvalidParameterSpecException, InvalidKeySpecException {
-        BigInteger x = new BigInteger(Base64.getDecoder().decode(publicKeyDetails.x().replace('-', '+').replace('_', '/')));
-        BigInteger y = new BigInteger(Base64.getDecoder().decode(publicKeyDetails.y().replace('-', '+').replace('_', '/')));
+        byte[] xBytes = Base64.getDecoder().decode(publicKeyDetails.x().replace('-', '+').replace('_', '/'));
+        byte[] yBytes = Base64.getDecoder().decode(publicKeyDetails.y().replace('-', '+').replace('_', '/'));
+        BigInteger x = new BigInteger(xBytes);
+        BigInteger y = new BigInteger(yBytes);
         ECPoint pubPoint = new ECPoint(x, y);
         AlgorithmParameters parameters = AlgorithmParameters.getInstance(publicKeyDetails.kty());
         parameters.init(new ECGenParameterSpec("secp256r1"));//publicKeyDetails.crv()));
@@ -82,6 +82,7 @@ public class BouncyCastleSignatureValidator {
 
         MessageDigest instance = MessageDigest.getInstance("SHA-256");
         return instance.digest(bytes);
+//        return bytes;
     }
 
     private static byte[] convertConcatToDer(byte[] concat) {
@@ -101,40 +102,5 @@ public class BouncyCastleSignatureValidator {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
-    }
-
-
-    private static byte[] ComputeLength(int x) {
-        if (x <= 127) {
-            return new byte[]{(byte) x};
-        } else if (x < 256) {
-            return new byte[]{(byte) 0x81, (byte) x};
-        }
-        throw new IllegalStateException("Danger will robinson, danger");
-    }
-
-    private static byte[] UnsignedInteger(byte[] i) {
-        int pad = 0, offset = 0;
-
-        while (offset < i.length && i[offset] == 0) {
-            offset++;
-        }
-
-        if (offset == i.length) {
-            return new byte[]{0x02, 0x01, 0x00};
-        }
-        if ((i[offset] & 0x80) != 0) {
-            pad++;
-        }
-
-        // M00BUG if the integer is > 127 bytes long with padding
-
-        int length = i.length - offset;
-        byte[] der = new byte[2 + length + pad];
-        der[0] = 0x02;
-        der[1] = (byte) (length + pad);
-        System.arraycopy(i, offset, der, 2 + pad, length);
-
-        return der;
     }
 }
