@@ -52,12 +52,14 @@ public class SignatureValidator {
     private boolean verifySignature(final NewZealandCovidPass covidPass) {
         try {
             PublicKey publicKey = extractPublicKey(keySupplier.getPublicKeyDetails(covidPass));
-            byte[] messageHash = buildMessageHash(covidPass);
+            //byte[] messageHash = buildMessageHash(covidPass);
+            byte[] cbor_sig_structure = buildMessageHash(covidPass);
             byte[] signature = convertConcatToDer(covidPass.signatureValue());
 
             Signature ecdsaSign = Signature.getInstance("SHA256withECDSA");
             ecdsaSign.initVerify(publicKey);
-            ecdsaSign.update(messageHash);
+            //ecdsaSign.update(messageHash);
+            ecdsaSign.update(cbor_sig_structure);
             return ecdsaSign.verify(signature);
         } catch (Exception e) {
             throw new IllegalStateException(e);
@@ -86,8 +88,9 @@ public class SignatureValidator {
         objectNode.add(new byte[]{});
         objectNode.add(covidPass.payloadvalue());
 
-        byte[] bytes = CBOR_MAPPER.writeValueAsBytes(objectNode);
-        return MESSAGE_DIGEST.digest(bytes);
+        return CBOR_MAPPER.writeValueAsBytes(objectNode);
+        //byte[] bytes = CBOR_MAPPER.writeValueAsBytes(objectNode);
+        //return MESSAGE_DIGEST.digest(bytes);
     }
 
     private byte[] convertConcatToDer(byte[] concat) {
