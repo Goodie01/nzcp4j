@@ -27,17 +27,18 @@ import org.goodiemania.j4nzcp.exception.BadSignatureException;
 import org.goodiemania.j4nzcp.impl.entities.NewZealandCovidPass;
 import org.goodiemania.j4nzcp.impl.entities.PublicKeysDetails;
 import org.goodiemania.j4nzcp.impl.key.KeySupplier;
+import org.goodiemania.j4nzcp.impl.key.UnirestKeySupplier;
 
 public class SignatureValidator {
     private static final CBORMapper CBOR_MAPPER = new CBORMapper();
 
     private final MessageDigest MESSAGE_DIGEST;
-    private final KeySupplier keySupplier = covidPass -> new PublicKeysDetails(
+    private final KeySupplier keySupplier = new UnirestKeySupplier();/*covidPass -> new PublicKeysDetails(
         "EC",
         "P-256",
         "zRR-XGsCp12Vvbgui4DD6O6cqmhfPuXMhi1OxPl8760",
         "Iv5SU6FuW-TRYh5_GOrJlcV_gpF_GpFQhCOD8LSk3T0"
-    );
+    );*/
 
     public SignatureValidator() throws NoSuchAlgorithmException {
         MESSAGE_DIGEST = MessageDigest.getInstance("SHA-256");
@@ -70,8 +71,8 @@ public class SignatureValidator {
         BigInteger x = new BigInteger(xBytes);
         BigInteger y = new BigInteger(yBytes);
         ECPoint pubPoint = new ECPoint(x, y);
-        AlgorithmParameters parameters = AlgorithmParameters.getInstance(publicKeyDetails.kty()); // "EC"
-        parameters.init(new ECGenParameterSpec("secp256r1"));//publicKeyDetails.crv())); returns P-256, java wants to know exactly secp256r1
+        AlgorithmParameters parameters = AlgorithmParameters.getInstance("EC");//publicKeyDetails.kty() Should always come from the endpoint as "EC"
+        parameters.init(new ECGenParameterSpec("secp256r1"));//publicKeyDetails.crv() Should always come from the endpoint as "P-256", java wants to know exactly secp256r1, or NIST P-256
         ECParameterSpec ecParameters = parameters.getParameterSpec(ECParameterSpec.class);
         ECPublicKeySpec pubSpec = new ECPublicKeySpec(pubPoint, ecParameters);
         KeyFactory kf = KeyFactory.getInstance("EC");
@@ -86,8 +87,8 @@ public class SignatureValidator {
         objectNode.add(new byte[]{});
         objectNode.add(covidPass.payloadvalue());
 
-        byte[] bytes = CBOR_MAPPER.writeValueAsBytes(objectNode);
-        return MESSAGE_DIGEST.digest(bytes);
+        return CBOR_MAPPER.writeValueAsBytes(objectNode);
+//        return MESSAGE_DIGEST.digest(CBOR_MAPPER.writeValueAsBytes(objectNode));
     }
 
     private byte[] convertConcatToDer(byte[] concat) {
