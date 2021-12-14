@@ -18,8 +18,12 @@ import java.security.spec.ECPoint;
 import java.security.spec.ECPublicKeySpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.InvalidParameterSpecException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Locale;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.DERSequenceGenerator;
 import org.goodiemania.j4nzcp.Nzcp4JException;
@@ -56,6 +60,10 @@ public class SignatureValidator {
             byte[] messageHash = buildMessageHash(covidPass);
             byte[] signature = convertConcatToDer(covidPass.signatureValue());
 
+            printByteArray("messageHash", messageHash);
+            printByteArray("signature", signature);
+            printByteArray("publicKey", publicKey.getEncoded());
+
             Signature ecdsaSign = Signature.getInstance("SHA256withECDSA");
             ecdsaSign.initVerify(publicKey);
             ecdsaSign.update(messageHash);
@@ -68,15 +76,22 @@ public class SignatureValidator {
     private PublicKey extractPublicKey(PublicKeysDetails publicKeyDetails) throws NoSuchAlgorithmException, InvalidParameterSpecException, InvalidKeySpecException {
         byte[] xBytes = Base64.getDecoder().decode(publicKeyDetails.x().replace('-', '+').replace('_', '/'));
         byte[] yBytes = Base64.getDecoder().decode(publicKeyDetails.y().replace('-', '+').replace('_', '/'));
+        printByteArray("xbytes", xBytes);
+        printByteArray("ybytes", yBytes);
         BigInteger x = new BigInteger(xBytes);
         BigInteger y = new BigInteger(yBytes);
-        ECPoint pubPoint = new ECPoint(x, y);
-        AlgorithmParameters parameters = AlgorithmParameters.getInstance("EC");//publicKeyDetails.kty() Should always come from the endpoint as "EC"
-        parameters.init(new ECGenParameterSpec("secp256r1"));//publicKeyDetails.crv() Should always come from the endpoint as "P-256", java wants to know exactly secp256r1, or NIST P-256
-        ECParameterSpec ecParameters = parameters.getParameterSpec(ECParameterSpec.class);
-        ECPublicKeySpec pubSpec = new ECPublicKeySpec(pubPoint, ecParameters);
-        KeyFactory kf = KeyFactory.getInstance("EC");
+        printBigInteger("x", x);
+        printBigInteger("y", y);
 
+        ECPoint ecPoint = new ECPoint(x, y);
+
+        ECGenParameterSpec parameterSpec = new ECGenParameterSpec("secp256r1");//publicKeyDetails.crv() Should always come from the endpoint as "P-256", java wants to know exactly secp256r1, or NIST P-256
+        AlgorithmParameters parameters = AlgorithmParameters.getInstance("EC");//publicKeyDetails.kty() Should always come from the endpoint as "EC"
+        parameters.init(parameterSpec);
+        ECParameterSpec ecParameters = parameters.getParameterSpec(ECParameterSpec.class);
+        ECPublicKeySpec pubSpec = new ECPublicKeySpec(ecPoint, ecParameters);
+
+        KeyFactory kf = KeyFactory.getInstance("EC");
         return kf.generatePublic(pubSpec);
     }
 
@@ -108,5 +123,18 @@ public class SignatureValidator {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    private void printBigInteger(final String name, BigInteger integer) {
+        NumberFormat formatter = new DecimalFormat("0.###########E000", DecimalFormatSymbols.getInstance(Locale.ROOT));
+        System.out.println(name + ": " + formatter.format(integer).replace("E", "E+"));
+    }
+
+    private void printByteArray(final String name, byte[] bytes) {
+        System.out.print(name + ": ");
+        for (final byte aByte : bytes) {
+            System.out.print(aByte);
+        }
+        System.out.println();
     }
 }
