@@ -3,6 +3,15 @@ package org.goodiemania.j4nzcp.impl;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.DERSequenceGenerator;
+import org.goodiemania.j4nzcp.Nzcp4JException;
+import org.goodiemania.j4nzcp.exception.BadSignatureException;
+import org.goodiemania.j4nzcp.impl.entities.NewZealandCovidPass;
+import org.goodiemania.j4nzcp.impl.entities.PublicKeysDetails;
+import org.goodiemania.j4nzcp.impl.key.KeySupplier;
+import org.goodiemania.j4nzcp.impl.key.UnirestKeySupplier;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -24,14 +33,6 @@ import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Locale;
-import org.bouncycastle.asn1.ASN1Integer;
-import org.bouncycastle.asn1.DERSequenceGenerator;
-import org.goodiemania.j4nzcp.Nzcp4JException;
-import org.goodiemania.j4nzcp.exception.BadSignatureException;
-import org.goodiemania.j4nzcp.impl.entities.NewZealandCovidPass;
-import org.goodiemania.j4nzcp.impl.entities.PublicKeysDetails;
-import org.goodiemania.j4nzcp.impl.key.KeySupplier;
-import org.goodiemania.j4nzcp.impl.key.UnirestKeySupplier;
 
 public class SignatureValidator {
     private static final CBORMapper CBOR_MAPPER = new CBORMapper();
@@ -74,18 +75,18 @@ public class SignatureValidator {
     }
 
     private PublicKey extractPublicKey(PublicKeysDetails publicKeyDetails) throws NoSuchAlgorithmException, InvalidParameterSpecException, InvalidKeySpecException {
-        byte[] xBytes = Base64.getDecoder().decode(publicKeyDetails.x().replace('-', '+').replace('_', '/'));
-        byte[] yBytes = Base64.getDecoder().decode(publicKeyDetails.y().replace('-', '+').replace('_', '/'));
+        byte[] xBytes = Base64.getUrlDecoder().decode(publicKeyDetails.x());
+        byte[] yBytes = Base64.getUrlDecoder().decode(publicKeyDetails.y());
         printByteArray("xbytes", xBytes);
         printByteArray("ybytes", yBytes);
-        BigInteger x = new BigInteger(xBytes);
-        BigInteger y = new BigInteger(yBytes);
+        BigInteger x = new BigInteger(1, xBytes);
+        BigInteger y = new BigInteger(1, yBytes);
         printBigInteger("x", x);
         printBigInteger("y", y);
 
         ECPoint ecPoint = new ECPoint(x, y);
 
-        ECGenParameterSpec parameterSpec = new ECGenParameterSpec("secp256r1");//publicKeyDetails.crv() Should always come from the endpoint as "P-256", java wants to know exactly secp256r1, or NIST P-256
+        ECGenParameterSpec parameterSpec = new ECGenParameterSpec("secp256r1");//publicKeyDetails.crv() Should always come from the endpoint as "P-256", java wants to know exactly secp256r1
         AlgorithmParameters parameters = AlgorithmParameters.getInstance("EC");//publicKeyDetails.kty() Should always come from the endpoint as "EC"
         parameters.init(parameterSpec);
         ECParameterSpec ecParameters = parameters.getParameterSpec(ECParameterSpec.class);
