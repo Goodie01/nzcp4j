@@ -48,7 +48,7 @@ public class CovidPassExtractor {
             ProtectedHeaders protectedHeaders = decodeProtectedHeaders(headerValue);
             Payload cwtPayload = decodePayload(payloadValue);
 
-            return new NewZealandCovidPass(protectedHeaders, cwtPayload, headerValue, weirdMiddleValue, payloadValue, signatureValue);
+            return new NewZealandCovidPass(protectedHeaders, cwtPayload, headerValue, payloadValue, signatureValue);
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }

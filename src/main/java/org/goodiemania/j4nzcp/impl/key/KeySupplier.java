@@ -5,5 +5,5 @@ import org.goodiemania.j4nzcp.impl.entities.NewZealandCovidPass;
 import org.goodiemania.j4nzcp.impl.entities.PublicKeysDetails;
 
 public interface KeySupplier {
-    PublicKeysDetails getPublicKeyDetails(NewZealandCovidPass covidPass) throws Nzcp4JException;
+    PublicKeysDetails getPublicKeyDetails(String issuer) throws Nzcp4JException;
 }

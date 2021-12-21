@@ -9,6 +9,7 @@ import org.goodiemania.j4nzcp.Nzcp4JException;
 import org.goodiemania.j4nzcp.exception.BadSignatureException;
 import org.goodiemania.j4nzcp.impl.entities.NewZealandCovidPass;
 import org.goodiemania.j4nzcp.impl.entities.PublicKeysDetails;
+import org.goodiemania.j4nzcp.impl.issuer.IssuerExtractor;
 import org.goodiemania.j4nzcp.impl.key.KeySupplier;
 import org.goodiemania.j4nzcp.impl.key.UnirestKeySupplier;
 
@@ -17,7 +18,6 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.AlgorithmParameters;
 import java.security.KeyFactory;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.Signature;
@@ -35,19 +35,15 @@ import java.util.Base64;
 import java.util.Locale;
 
 public class SignatureValidator {
+    private final IssuerExtractor ISSUER_EXTRACTOR = new IssuerExtractor();
     private static final CBORMapper CBOR_MAPPER = new CBORMapper();
 
-    private final MessageDigest MESSAGE_DIGEST;
     private final KeySupplier keySupplier = new UnirestKeySupplier();/*covidPass -> new PublicKeysDetails(
         "EC",
         "P-256",
         "zRR-XGsCp12Vvbgui4DD6O6cqmhfPuXMhi1OxPl8760",
         "Iv5SU6FuW-TRYh5_GOrJlcV_gpF_GpFQhCOD8LSk3T0"
     );*/
-
-    public SignatureValidator() throws NoSuchAlgorithmException {
-        MESSAGE_DIGEST = MessageDigest.getInstance("SHA-256");
-    }
 
     public void validate(final NewZealandCovidPass covidPass) throws Nzcp4JException {
         if (!this.verifySignature(covidPass)) {
@@ -57,7 +53,7 @@ public class SignatureValidator {
 
     private boolean verifySignature(final NewZealandCovidPass covidPass) {
         try {
-            PublicKey publicKey = extractPublicKey(keySupplier.getPublicKeyDetails(covidPass));
+            PublicKey publicKey = extractPublicKey(covidPass);
             byte[] messageHash = buildMessageHash(covidPass);
             byte[] signature = convertConcatToDer(covidPass.signatureValue());
 
@@ -74,7 +70,10 @@ public class SignatureValidator {
         }
     }
 
-    private PublicKey extractPublicKey(PublicKeysDetails publicKeyDetails) throws NoSuchAlgorithmException, InvalidParameterSpecException, InvalidKeySpecException {
+    private PublicKey extractPublicKey(NewZealandCovidPass covidPass) throws NoSuchAlgorithmException, InvalidParameterSpecException, InvalidKeySpecException, Nzcp4JException {
+        String issuer = ISSUER_EXTRACTOR.extractIssuer(covidPass);
+        PublicKeysDetails publicKeyDetails = keySupplier.getPublicKeyDetails(issuer);
+
         byte[] xBytes = Base64.getUrlDecoder().decode(publicKeyDetails.x());
         byte[] yBytes = Base64.getUrlDecoder().decode(publicKeyDetails.y());
         printByteArray("xbytes", xBytes);
@@ -101,7 +100,7 @@ public class SignatureValidator {
         objectNode.add("Signature1");
         objectNode.add(covidPass.headerValue());
         objectNode.add(new byte[]{});
-        objectNode.add(covidPass.payloadvalue());
+        objectNode.add(covidPass.payloadValue());
 
         return CBOR_MAPPER.writeValueAsBytes(objectNode);
 //        return MESSAGE_DIGEST.digest(CBOR_MAPPER.writeValueAsBytes(objectNode));

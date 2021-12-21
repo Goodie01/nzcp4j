@@ -4,7 +4,6 @@ public record NewZealandCovidPass(
         ProtectedHeaders headers,
         Payload payload,
         byte[] headerValue,
-        byte[] weirdMiddleValue,
-        byte[] payloadvalue,
+        byte[] payloadValue,
         byte[] signatureValue) {
 }

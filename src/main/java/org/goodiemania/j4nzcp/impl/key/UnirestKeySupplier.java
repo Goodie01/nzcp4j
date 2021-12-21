@@ -10,9 +10,9 @@ import org.json.JSONObject;
 
 public class UnirestKeySupplier implements KeySupplier {
     @Override
-    public PublicKeysDetails getPublicKeyDetails(NewZealandCovidPass covidPass) throws Nzcp4JException {
+    public PublicKeysDetails getPublicKeyDetails(String issuer) throws Nzcp4JException {
         try {
-            String url = "https://" + covidPass.payload().iss().substring(8) + "/.well-known/did.json";
+            String url = "https://" + issuer + "/.well-known/did.json";
             JSONObject jsonObject = Unirest.get(url).asJson().getBody().getObject()
                     .getJSONArray("verificationMethod")
                     .getJSONObject(0)

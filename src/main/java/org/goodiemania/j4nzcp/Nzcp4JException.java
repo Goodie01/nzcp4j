@@ -1,5 +1,8 @@
 package org.goodiemania.j4nzcp;
 
+/**
+ * Root exception
+ */
 public abstract class Nzcp4JException extends Exception{
     private String url;
 

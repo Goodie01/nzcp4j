@@ -6,6 +6,7 @@ import org.goodiemania.j4nzcp.Verifier;
 import org.goodiemania.j4nzcp.exception.InvalidVersionException;
 import org.goodiemania.j4nzcp.impl.entities.ExtractedCovidPassDetails;
 import org.goodiemania.j4nzcp.impl.entities.NewZealandCovidPass;
+import org.goodiemania.j4nzcp.impl.issuer.IssuerExtractor;
 
 public class VerifierImpl implements Verifier {
     private static final String VERSION_ONE = "1";
@@ -36,7 +37,6 @@ public class VerifierImpl implements Verifier {
             COVID_PASS_VALIDATOR.validate(pass);
 
             SIGNATURE_VALIDATOR.validate(pass);
-            System.out.println("Lets do this");
         } else {
             throw new InvalidVersionException(version);
         }

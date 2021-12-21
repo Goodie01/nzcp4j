@@ -7,8 +7,8 @@ import org.goodiemania.j4nzcp.impl.entities.PublicKeysDetails;
 
 public class OfflineStaticKeySupplier implements KeySupplier {
     @Override
-    public PublicKeysDetails getPublicKeyDetails(NewZealandCovidPass covidPass) throws Nzcp4JException {
-        if (covidPass.payload().iss().equals("did:web:nzcp.covid19.health.nz")) {
+    public PublicKeysDetails getPublicKeyDetails(String issuer) throws Nzcp4JException {
+        if (issuer.equals("nzcp.covid19.health.nz")) {
             return new PublicKeysDetails(
                 "EC",
                 "P-256",
