@@ -1,12 +1,16 @@
 package org.goodiemania.j4nzcp.impl;
 
 import org.goodiemania.j4nzcp.Nzcp4JException;
+import org.goodiemania.j4nzcp.VerificationResult;
 import org.goodiemania.j4nzcp.Verifier;
 import org.goodiemania.j4nzcp.exception.BadSignatureException;
 import org.goodiemania.j4nzcp.exception.ExpiredPassException;
 import org.goodiemania.j4nzcp.exception.InactivePassException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Tests {
     final static String VALID_PASS = "NZCP:/1/2KCEVIQEIVVWK6JNGEASNICZAEP2KALYDZSGSZB2O5SWEOTOPJRXALTDN53GSZBRHEXGQZLBNR2GQLTOPICRUYMBTIFAIGTUKBAAUYTWMOSGQQDDN5XHIZLYOSBHQJTIOR2HA4Z2F4XXO53XFZ3TGLTPOJTS6MRQGE4C6Y3SMVSGK3TUNFQWY4ZPOYYXQKTIOR2HA4Z2F4XW46TDOAXGG33WNFSDCOJONBSWC3DUNAXG46RPMNXW45DFPB2HGL3WGFTXMZLSONUW63TFGEXDALRQMR2HS4DFQJ2FMZLSNFTGSYLCNRSUG4TFMRSW45DJMFWG6UDVMJWGSY2DN53GSZCQMFZXG4LDOJSWIZLOORUWC3CTOVRGUZLDOSRWSZ3JOZSW4TTBNVSWISTBMNVWUZTBNVUWY6KOMFWWKZ2TOBQXE4TPO5RWI33CNIYTSNRQFUYDILJRGYDVAYFE6VGU4MCDGK7DHLLYWHVPUS2YIDJOA6Y524TD3AZRM263WTY2BE4DPKIF27WKF3UDNNVSVWRDYIYVJ65IRJJJ6Z25M2DO4YZLBHWFQGVQR5ZLIWEQJOZTS3IQ7JTNCFDX";
@@ -23,7 +27,13 @@ public class Tests {
                 .addTrustedIssuer("nzcp.covid19.health.nz")
                 .build();
 
-        verifier.verify(VALID_PASS);
+        VerificationResult result = verifier.verify(VALID_PASS);
+
+        Assertions.assertEquals("Jack", result.givenName());
+        Assertions.assertEquals("Sparrow", result.familyName());
+        Assertions.assertEquals(LocalDate.of(1960,4,16), result.dob());
+        Assertions.assertEquals(LocalDateTime.of(2021,11,3,9,5,30), result.notBefore());
+        Assertions.assertEquals(LocalDateTime.of(2031,11,3,9,5,30), result.expiry());
     }
 
     @Test

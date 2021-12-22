@@ -3,6 +3,7 @@ package org.goodiemania.j4nzcp.impl;
 import java.util.Set;
 
 import org.goodiemania.j4nzcp.Nzcp4JException;
+import org.goodiemania.j4nzcp.VerificationResult;
 import org.goodiemania.j4nzcp.Verifier;
 import org.goodiemania.j4nzcp.exception.InvalidVersionException;
 import org.goodiemania.j4nzcp.impl.entities.ExtractedCovidPassDetails;
@@ -29,7 +30,7 @@ public class VerifierImpl implements Verifier {
     }
 
     @Override
-    public void verify(final String nzcpCode) throws Nzcp4JException {
+    public VerificationResult verify(final String nzcpCode) throws Nzcp4JException {
         ExtractedCovidPassDetails extract = RAW_STRING_EXTRACTOR.extract(nzcpCode);
 
         String version = extract.version();
@@ -37,8 +38,15 @@ public class VerifierImpl implements Verifier {
             String cwtValue = extract.payload();
             NewZealandCovidPass pass = COVID_PASS_EXTRACTOR.extract(cwtValue);
             COVID_PASS_VALIDATOR.validate(pass);
-
             SIGNATURE_VALIDATOR.validate(pass);
+
+            return new VerificationResult(
+                    pass.payload().vc().credentials().givenName(),
+                    pass.payload().vc().credentials().familyName(),
+                    pass.payload().vc().credentials().dob(),
+                    pass.payload().notBefore(),
+                    pass.payload().expiry()
+            );
         } else {
             throw new InvalidVersionException(version);
         }

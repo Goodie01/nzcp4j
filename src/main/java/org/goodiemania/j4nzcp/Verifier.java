@@ -5,5 +5,5 @@ public interface Verifier {
         return new VerifierBuilder();
     }
 
-    void verify(final String nzcpCode) throws Nzcp4JException;
+    VerificationResult verify(final String nzcpCode) throws Nzcp4JException;
 }
