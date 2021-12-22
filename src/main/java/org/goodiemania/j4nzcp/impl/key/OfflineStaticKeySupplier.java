@@ -1,12 +1,14 @@
 package org.goodiemania.j4nzcp.impl.key;
 
 import org.goodiemania.j4nzcp.Nzcp4JException;
-import org.goodiemania.j4nzcp.exception.KeySupplierException;
+import org.goodiemania.j4nzcp.exception.InvalidKeyException;
 import org.goodiemania.j4nzcp.impl.entities.PublicKeysDetails;
 
 public class OfflineStaticKeySupplier implements KeySupplier {
     private static final String TEST_KEY_NAME = "nzcp.covid19.health.nz";
+    private static final String TEST_KID_NAME = "key-1";
     private static final String LIVE_KEY_NAME = "nzcp.identity.health.nz";
+    private static final String LIVE_KID_NAME = "z12Kf7UQ";
     private static final PublicKeysDetails TEST_KEY = new PublicKeysDetails( //key-1
             "EC",
             "P-256",
@@ -21,13 +23,13 @@ public class OfflineStaticKeySupplier implements KeySupplier {
     );
 
     @Override
-    public PublicKeysDetails getPublicKeyDetails(String issuer) throws Nzcp4JException {
-        if (TEST_KEY_NAME.equals(issuer)) {
+    public PublicKeysDetails getPublicKeyDetails(String issuer, String kid) throws Nzcp4JException {
+        if (TEST_KEY_NAME.equals(issuer) && TEST_KID_NAME.equals(kid)) {
             return TEST_KEY;
-        } else if(LIVE_KEY_NAME.equals(issuer)) {
+        } else if (LIVE_KEY_NAME.equals(issuer) && LIVE_KID_NAME.equals(kid)) {
             return LIVE_KEY;
         } else {
-            throw new KeySupplierException("ISS does not match offline key");
+            throw new InvalidKeyException("ISS does not match offline key");
         }
     }
 }

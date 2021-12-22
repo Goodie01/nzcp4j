@@ -71,7 +71,7 @@ public class SignatureValidator {
 
     private PublicKey extractPublicKey(NewZealandCovidPass covidPass) throws NoSuchAlgorithmException, InvalidParameterSpecException, InvalidKeySpecException, Nzcp4JException {
         String issuer = ISSUER_EXTRACTOR.extractIssuer(covidPass);
-        PublicKeysDetails publicKeyDetails = keySupplier.getPublicKeyDetails(issuer);
+        PublicKeysDetails publicKeyDetails = keySupplier.getPublicKeyDetails(issuer, covidPass.headers().kid());
 
         byte[] xBytes = Base64.getUrlDecoder().decode(publicKeyDetails.x());
         byte[] yBytes = Base64.getUrlDecoder().decode(publicKeyDetails.y());
