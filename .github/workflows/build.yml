@@ -25,3 +25,5 @@ jobs:
         run: mvn -B package
       - name: Build Javadoc site with Maven
         run: mvn -B javadoc:javadoc
+      - name: Linting test
+        uses: JetBrains/qodana-action@v4.1.0
