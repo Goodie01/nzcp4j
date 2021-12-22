@@ -2,10 +2,10 @@ package org.goodiemania.j4nzcp;
 
 /**
  * This exception is the root exception for everything related to an invalid pass
- *
+ * <p>
  * eg bad expiry date, bad issuer, etc
  */
-public class InvalidPassException extends Nzcp4JException{
+public class InvalidPassException extends Nzcp4JException {
     public InvalidPassException(String message, String url) {
         super(message, url);
     }
@@ -18,7 +18,13 @@ public class InvalidPassException extends Nzcp4JException{
         super(message, cause);
     }
 
+    public InvalidPassException(Throwable cause) {
+        super(cause);
+    }
+
     public InvalidPassException(String message) {
         super(message);
     }
+
+
 }

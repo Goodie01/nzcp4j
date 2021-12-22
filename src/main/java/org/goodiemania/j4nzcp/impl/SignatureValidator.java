@@ -38,12 +38,11 @@ public class SignatureValidator {
     private final IssuerExtractor ISSUER_EXTRACTOR = new IssuerExtractor();
     private static final CBORMapper CBOR_MAPPER = new CBORMapper();
 
-    private final KeySupplier keySupplier = new UnirestKeySupplier();/*covidPass -> new PublicKeysDetails(
-        "EC",
-        "P-256",
-        "zRR-XGsCp12Vvbgui4DD6O6cqmhfPuXMhi1OxPl8760",
-        "Iv5SU6FuW-TRYh5_GOrJlcV_gpF_GpFQhCOD8LSk3T0"
-    );*/
+    private final KeySupplier keySupplier;
+
+    public SignatureValidator() {
+        keySupplier = new UnirestKeySupplier();
+    }
 
     public void validate(final NewZealandCovidPass covidPass) throws Nzcp4JException {
         if (!this.verifySignature(covidPass)) {
@@ -51,11 +50,11 @@ public class SignatureValidator {
         }
     }
 
-    private boolean verifySignature(final NewZealandCovidPass covidPass) {
+    private boolean verifySignature(final NewZealandCovidPass covidPass) throws Nzcp4JException {
         try {
             PublicKey publicKey = extractPublicKey(covidPass);
             byte[] messageHash = buildMessageHash(covidPass);
-            byte[] signature = convertConcatToDer(covidPass.signatureValue());
+            byte[] signature = buildSignature(covidPass.signatureValue());
 
             printByteArray("messageHash", messageHash);
             printByteArray("signature", signature);
@@ -66,7 +65,7 @@ public class SignatureValidator {
             ecdsaSign.update(messageHash);
             return ecdsaSign.verify(signature);
         } catch (Exception e) {
-            throw new IllegalStateException(e);
+            throw new BadSignatureException(e);
         }
     }
 
@@ -103,10 +102,9 @@ public class SignatureValidator {
         objectNode.add(covidPass.payloadValue());
 
         return CBOR_MAPPER.writeValueAsBytes(objectNode);
-//        return MESSAGE_DIGEST.digest(CBOR_MAPPER.writeValueAsBytes(objectNode));
     }
 
-    private byte[] convertConcatToDer(byte[] concat) {
+    private byte[] buildSignature(byte[] concat) throws BadSignatureException {
         try {
             int len = concat.length / 2;
             byte[] r = Arrays.copyOfRange(concat, 0, len);
@@ -121,7 +119,7 @@ public class SignatureValidator {
 
             return outputStream.toByteArray();
         } catch (Exception e) {
-            throw new IllegalStateException(e);
+            throw new IllegalStateException("Error encountered while building signature", e);
         }
     }
 

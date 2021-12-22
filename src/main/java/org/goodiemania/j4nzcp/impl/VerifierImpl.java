@@ -1,12 +1,14 @@
 package org.goodiemania.j4nzcp.impl;
 
-import java.security.NoSuchAlgorithmException;
+import java.util.Set;
+
 import org.goodiemania.j4nzcp.Nzcp4JException;
 import org.goodiemania.j4nzcp.Verifier;
 import org.goodiemania.j4nzcp.exception.InvalidVersionException;
 import org.goodiemania.j4nzcp.impl.entities.ExtractedCovidPassDetails;
 import org.goodiemania.j4nzcp.impl.entities.NewZealandCovidPass;
-import org.goodiemania.j4nzcp.impl.issuer.IssuerExtractor;
+import org.goodiemania.j4nzcp.impl.key.KeySupplier;
+import org.goodiemania.j4nzcp.impl.key.UnirestKeySupplier;
 
 public class VerifierImpl implements Verifier {
     private static final String VERSION_ONE = "1";
@@ -15,7 +17,7 @@ public class VerifierImpl implements Verifier {
     private final CovidPassValidator COVID_PASS_VALIDATOR;
     private final SignatureValidator SIGNATURE_VALIDATOR;
 
-    public VerifierImpl() {
+    public VerifierImpl(Set<String> trustedIssuers, KeySupplier unirestKeySupplier) {
         try {
             RAW_STRING_EXTRACTOR = new RawStringExtractor();
             COVID_PASS_EXTRACTOR = new CovidPassExtractor();

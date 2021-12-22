@@ -20,6 +20,10 @@ public abstract class Nzcp4JException extends Exception{
         super(message, cause);
     }
 
+    public Nzcp4JException(Throwable cause) {
+        super(cause);
+    }
+
     public Nzcp4JException(final String message) {
         super(message);
     }
