@@ -41,7 +41,6 @@ public class CovidPassExtractor {
             byte[] decode = BASE32_ENCODER.decode(addPadding(cwtValue));
             JsonNode cborObject = getInitialJsonNode(decode);
             byte[] headerValue = cborObject.get(0).binaryValue();
-            byte[] weirdMiddleValue = cborObject.get(1).binaryValue();
             byte[] payloadValue = cborObject.get(2).binaryValue();
             byte[] signatureValue = cborObject.get(3).binaryValue();
 
