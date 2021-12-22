@@ -3,6 +3,8 @@ package org.goodiemania.j4nzcp.impl;
 import org.goodiemania.j4nzcp.Nzcp4JException;
 import org.goodiemania.j4nzcp.Verifier;
 import org.goodiemania.j4nzcp.exception.BadSignatureException;
+import org.goodiemania.j4nzcp.exception.ExpiredPassException;
+import org.goodiemania.j4nzcp.exception.InactivePassException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -66,7 +68,7 @@ public class Tests {
                 .addTrustedIssuer("nzcp.covid19.health.nz")
                 .build();
 
-        Assertions.assertThrows(BadSignatureException.class, () -> verifier.verify(EXPIRED_PASS));
+        Assertions.assertThrows(ExpiredPassException.class, () -> verifier.verify(EXPIRED_PASS));
     }
 
     @Test
@@ -75,6 +77,6 @@ public class Tests {
                 .addTrustedIssuer("nzcp.covid19.health.nz")
                 .build();
 
-        Assertions.assertThrows(BadSignatureException.class, () -> verifier.verify(NOT_ACTIVE_PASS));
+        Assertions.assertThrows(InactivePassException.class, () -> verifier.verify(NOT_ACTIVE_PASS));
     }
 }
