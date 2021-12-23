@@ -1,20 +1,18 @@
 package org.goodiemania.j4nzcp;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Consumer;
 import org.goodiemania.j4nzcp.impl.VerifierImpl;
 import org.goodiemania.j4nzcp.impl.key.KeySupplier;
 import org.goodiemania.j4nzcp.impl.key.OfflineStaticKeySupplier;
 import org.goodiemania.j4nzcp.impl.key.UnirestKeySupplier;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Consumer;
-
 /**
  * Builder for NZCP verifier
  */
 public class VerifierBuilder {
-    private Set<String> trustedIssuers = new HashSet<>(List.of("nzcp.identity.health.nz"));
+    private Set<String> trustedIssuers = new HashSet<>(Set.of("nzcp.identity.health.nz"));
     private KeySupplier customKeySupplier;
     private RequestedKeySupplier requestedKeySupplier = RequestedKeySupplier.ONLINE_CACHED;
 
@@ -39,7 +37,7 @@ public class VerifierBuilder {
      * @param issuers a set of strings representing trusted issuers, to override the current trusted issuers
      * @return This object, for fluent chaining of methods
      */
-    public VerifierBuilder setTrustedIssuer(final Set<String> issuers) {
+    public VerifierBuilder setTrustedIssuers(final Set<String> issuers) {
         trustedIssuers = issuers;
         return this;
     }

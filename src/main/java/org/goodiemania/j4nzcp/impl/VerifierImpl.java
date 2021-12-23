@@ -22,7 +22,7 @@ public class VerifierImpl implements Verifier {
         try {
             RAW_STRING_EXTRACTOR = new RawStringExtractor();
             COVID_PASS_EXTRACTOR = new CovidPassExtractor();
-            COVID_PASS_VALIDATOR = new CovidPassValidator();
+            COVID_PASS_VALIDATOR = new CovidPassValidator(trustedIssuers);
             SIGNATURE_VALIDATOR = new SignatureValidator();
         } catch (Exception e) {
             throw new IllegalStateException(e);

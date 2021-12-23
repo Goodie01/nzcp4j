@@ -5,6 +5,6 @@ import org.goodiemania.j4nzcp.Nzcp4JException;
 
 public class InvalidIssuerException extends InvalidPassException {
     public InvalidIssuerException(final String iss) {
-        super("Unsupported ISS detected: " + iss);
+        super("Invalid ISS detected: " + iss);
     }
 }

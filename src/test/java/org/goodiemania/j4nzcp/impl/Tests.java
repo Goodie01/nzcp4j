@@ -1,16 +1,17 @@
 package org.goodiemania.j4nzcp.impl;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Set;
 import org.goodiemania.j4nzcp.Nzcp4JException;
 import org.goodiemania.j4nzcp.VerificationResult;
 import org.goodiemania.j4nzcp.Verifier;
 import org.goodiemania.j4nzcp.exception.BadSignatureException;
 import org.goodiemania.j4nzcp.exception.ExpiredPassException;
 import org.goodiemania.j4nzcp.exception.InactivePassException;
+import org.goodiemania.j4nzcp.exception.UnknownIssuerException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class Tests {
     final static String VALID_PASS = "NZCP:/1/2KCEVIQEIVVWK6JNGEASNICZAEP2KALYDZSGSZB2O5SWEOTOPJRXALTDN53GSZBRHEXGQZLBNR2GQLTOPICRUYMBTIFAIGTUKBAAUYTWMOSGQQDDN5XHIZLYOSBHQJTIOR2HA4Z2F4XXO53XFZ3TGLTPOJTS6MRQGE4C6Y3SMVSGK3TUNFQWY4ZPOYYXQKTIOR2HA4Z2F4XW46TDOAXGG33WNFSDCOJONBSWC3DUNAXG46RPMNXW45DFPB2HGL3WGFTXMZLSONUW63TFGEXDALRQMR2HS4DFQJ2FMZLSNFTGSYLCNRSUG4TFMRSW45DJMFWG6UDVMJWGSY2DN53GSZCQMFZXG4LDOJSWIZLOORUWC3CTOVRGUZLDOSRWSZ3JOZSW4TTBNVSWISTBMNVWUZTBNVUWY6KOMFWWKZ2TOBQXE4TPO5RWI33CNIYTSNRQFUYDILJRGYDVAYFE6VGU4MCDGK7DHLLYWHVPUS2YIDJOA6Y524TD3AZRM263WTY2BE4DPKIF27WKF3UDNNVSVWRDYIYVJ65IRJJJ6Z25M2DO4YZLBHWFQGVQR5ZLIWEQJOZTS3IQ7JTNCFDX";
@@ -24,23 +25,32 @@ public class Tests {
     @Test
     void valid_pass() throws Nzcp4JException {
         Verifier verifier = Verifier.builder()
-                .addTrustedIssuer("nzcp.covid19.health.nz")
-                .build();
+            .addTrustedIssuer("nzcp.covid19.health.nz")
+            .build();
 
         VerificationResult result = verifier.verify(VALID_PASS);
 
         Assertions.assertEquals("Jack", result.givenName());
         Assertions.assertEquals("Sparrow", result.familyName());
-        Assertions.assertEquals(LocalDate.of(1960,4,16), result.dob());
-        Assertions.assertEquals(LocalDateTime.of(2021,11,3,9,5,30), result.notBefore());
-        Assertions.assertEquals(LocalDateTime.of(2031,11,3,9,5,30), result.expiry());
+        Assertions.assertEquals(LocalDate.of(1960, 4, 16), result.dob());
+        Assertions.assertEquals(LocalDateTime.of(2021, 11, 3, 9, 5, 30), result.notBefore());
+        Assertions.assertEquals(LocalDateTime.of(2031, 11, 3, 9, 5, 30), result.expiry());
+    }
+
+    @Test
+    void invalid_issuer() {
+        Verifier verifier = Verifier.builder()
+            .setTrustedIssuers(Set.of())
+            .build();
+
+        Assertions.assertThrows(UnknownIssuerException.class, () -> verifier.verify(VALID_PASS));
     }
 
     @Test
     void bad_public_key() throws Nzcp4JException {
         Verifier verifier = Verifier.builder()
-                .addTrustedIssuer("nzcp.covid19.health.nz")
-                .build();
+            .addTrustedIssuer("nzcp.covid19.health.nz")
+            .build();
 
         Assertions.assertThrows(BadSignatureException.class, () -> verifier.verify(BAD_PUBLIC_KEY));
     }
@@ -48,8 +58,8 @@ public class Tests {
     @Test
     void public_key_not_found() throws Nzcp4JException {
         Verifier verifier = Verifier.builder()
-                .addTrustedIssuer("nzcp.covid19.health.nz")
-                .build();
+            .addTrustedIssuer("nzcp.covid19.health.nz")
+            .build();
 
         Assertions.assertThrows(BadSignatureException.class, () -> verifier.verify(PUBLIC_KEY_NOT_FOUND));
     }
@@ -57,8 +67,8 @@ public class Tests {
     @Test
     void modified_signature() throws Nzcp4JException {
         Verifier verifier = Verifier.builder()
-                .addTrustedIssuer("nzcp.covid19.health.nz")
-                .build();
+            .addTrustedIssuer("nzcp.covid19.health.nz")
+            .build();
 
         Assertions.assertThrows(BadSignatureException.class, () -> verifier.verify(MODIFIED_SIGNATURE));
     }
@@ -66,8 +76,8 @@ public class Tests {
     @Test
     void modified_payload() throws Nzcp4JException {
         Verifier verifier = Verifier.builder()
-                .addTrustedIssuer("nzcp.covid19.health.nz")
-                .build();
+            .addTrustedIssuer("nzcp.covid19.health.nz")
+            .build();
 
         Assertions.assertThrows(BadSignatureException.class, () -> verifier.verify(MODIFIED_PAYLOAD));
     }
@@ -75,8 +85,8 @@ public class Tests {
     @Test
     void expired_pass() throws Nzcp4JException {
         Verifier verifier = Verifier.builder()
-                .addTrustedIssuer("nzcp.covid19.health.nz")
-                .build();
+            .addTrustedIssuer("nzcp.covid19.health.nz")
+            .build();
 
         Assertions.assertThrows(ExpiredPassException.class, () -> verifier.verify(EXPIRED_PASS));
     }
@@ -84,8 +94,8 @@ public class Tests {
     @Test
     void not_active_pass() throws Nzcp4JException {
         Verifier verifier = Verifier.builder()
-                .addTrustedIssuer("nzcp.covid19.health.nz")
-                .build();
+            .addTrustedIssuer("nzcp.covid19.health.nz")
+            .build();
 
         Assertions.assertThrows(InactivePassException.class, () -> verifier.verify(NOT_ACTIVE_PASS));
     }
