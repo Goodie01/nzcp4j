@@ -1,4 +1,4 @@
-package org.goodiemania.nzcp4j.impl.entities.key;
+package org.goodiemania.nzcp4j.impl.dto;
 
 public record VerificationMethod(
     String id,

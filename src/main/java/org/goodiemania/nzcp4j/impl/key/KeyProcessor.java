@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.goodiemania.nzcp4j.Nzcp4JException;
 import org.goodiemania.nzcp4j.impl.entities.PublicKeysDetails;
-import org.goodiemania.nzcp4j.impl.entities.key.PublicKeyJwk;
-import org.goodiemania.nzcp4j.impl.entities.key.Root;
-import org.goodiemania.nzcp4j.impl.entities.key.VerificationMethod;
+import org.goodiemania.nzcp4j.impl.dto.PublicKeyJwk;
+import org.goodiemania.nzcp4j.impl.dto.Root;
+import org.goodiemania.nzcp4j.impl.dto.VerificationMethod;
 
 public class KeyProcessor {
     private final ObjectMapper mapper;

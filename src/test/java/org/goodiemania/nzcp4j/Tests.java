@@ -1,11 +1,8 @@
-package org.goodiemania.nzcp4j.impl;
+package org.goodiemania.nzcp4j;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
-import org.goodiemania.nzcp4j.Nzcp4JException;
-import org.goodiemania.nzcp4j.VerificationResult;
-import org.goodiemania.nzcp4j.Verifier;
 import org.goodiemania.nzcp4j.exception.BadSignatureException;
 import org.goodiemania.nzcp4j.exception.ExpiredPassException;
 import org.goodiemania.nzcp4j.exception.InactivePassException;
