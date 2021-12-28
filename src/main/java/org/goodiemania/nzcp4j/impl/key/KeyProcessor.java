@@ -3,7 +3,7 @@ package org.goodiemania.nzcp4j.impl.key;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.goodiemania.nzcp4j.Nzcp4JException;
+import org.goodiemania.nzcp4j.exceptions.Nzcp4JException;
 import org.goodiemania.nzcp4j.impl.entities.PublicKeysDetails;
 import org.goodiemania.nzcp4j.impl.dto.PublicKeyJwk;
 import org.goodiemania.nzcp4j.impl.dto.Root;

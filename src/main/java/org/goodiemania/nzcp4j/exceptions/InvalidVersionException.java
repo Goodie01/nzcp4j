@@ -1,6 +1,4 @@
-package org.goodiemania.nzcp4j.exception;
-
-import org.goodiemania.nzcp4j.Nzcp4JException;
+package org.goodiemania.nzcp4j.exceptions;
 
 public class InvalidVersionException extends Nzcp4JException {
     public InvalidVersionException(final String version) {

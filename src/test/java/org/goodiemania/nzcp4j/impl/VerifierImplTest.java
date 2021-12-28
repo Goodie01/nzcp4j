@@ -1,7 +1,7 @@
 package org.goodiemania.nzcp4j.impl;
 
-import org.goodiemania.nzcp4j.Nzcp4JException;
-import org.goodiemania.nzcp4j.exception.InvalidVersionException;
+import org.goodiemania.nzcp4j.exceptions.Nzcp4JException;
+import org.goodiemania.nzcp4j.exceptions.InvalidVersionException;
 import org.goodiemania.nzcp4j.impl.key.OfflineStaticKeySupplier;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -1,6 +1,6 @@
 package org.goodiemania.nzcp4j.impl.key;
 
-import org.goodiemania.nzcp4j.exception.KeySupplierException;
+import org.goodiemania.nzcp4j.exceptions.KeySupplierException;
 
 public class OfflineStaticKeySupplier implements KeySupplier {
     private static final String TEST_URL = "https://nzcp.covid19.health.nz/.well-known/did.json";

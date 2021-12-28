@@ -1,7 +1,6 @@
-package org.goodiemania.nzcp4j.exception;
+package org.goodiemania.nzcp4j.exceptions;
 
 import java.text.MessageFormat;
-import org.goodiemania.nzcp4j.Nzcp4JException;
 
 public class UnsupportedAlgorithmException extends Nzcp4JException {
     public UnsupportedAlgorithmException(final String algorithmTagValue) {

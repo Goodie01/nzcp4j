@@ -1,6 +1,6 @@
 package org.goodiemania.nzcp4j.impl.issuer;
 
-import org.goodiemania.nzcp4j.exception.InvalidIssuerFormatException;
+import org.goodiemania.nzcp4j.exceptions.InvalidIssuerFormatException;
 import org.goodiemania.nzcp4j.impl.entities.NewZealandCovidPass;
 import org.goodiemania.nzcp4j.impl.entities.Payload;
 import org.junit.jupiter.api.BeforeEach;

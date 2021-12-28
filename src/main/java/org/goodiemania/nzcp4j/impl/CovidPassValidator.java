@@ -2,12 +2,12 @@ package org.goodiemania.nzcp4j.impl;
 
 import java.time.LocalDateTime;
 import java.util.Set;
-import org.goodiemania.nzcp4j.Nzcp4JException;
-import org.goodiemania.nzcp4j.exception.ExpiredPassException;
-import org.goodiemania.nzcp4j.exception.InactivePassException;
-import org.goodiemania.nzcp4j.exception.InvalidIssuerException;
-import org.goodiemania.nzcp4j.exception.UnknownIssuerException;
-import org.goodiemania.nzcp4j.exception.UnsupportedAlgorithmException;
+import org.goodiemania.nzcp4j.exceptions.Nzcp4JException;
+import org.goodiemania.nzcp4j.exceptions.ExpiredPassException;
+import org.goodiemania.nzcp4j.exceptions.InactivePassException;
+import org.goodiemania.nzcp4j.exceptions.InvalidIssuerException;
+import org.goodiemania.nzcp4j.exceptions.UnknownIssuerException;
+import org.goodiemania.nzcp4j.exceptions.UnsupportedAlgorithmException;
 import org.goodiemania.nzcp4j.impl.entities.NewZealandCovidPass;
 
 public class CovidPassValidator {

@@ -1,10 +1,10 @@
 package org.goodiemania.nzcp4j.impl;
 
 import java.util.Set;
-import org.goodiemania.nzcp4j.Nzcp4JException;
+import org.goodiemania.nzcp4j.exceptions.Nzcp4JException;
 import org.goodiemania.nzcp4j.VerificationResult;
 import org.goodiemania.nzcp4j.Verifier;
-import org.goodiemania.nzcp4j.exception.InvalidVersionException;
+import org.goodiemania.nzcp4j.exceptions.InvalidVersionException;
 import org.goodiemania.nzcp4j.impl.entities.ExtractedCovidPassDetails;
 import org.goodiemania.nzcp4j.impl.entities.NewZealandCovidPass;
 import org.goodiemania.nzcp4j.impl.key.KeySupplier;

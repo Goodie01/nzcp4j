@@ -1,6 +1,4 @@
-package org.goodiemania.nzcp4j.exception;
-
-import org.goodiemania.nzcp4j.Nzcp4jInternalException;
+package org.goodiemania.nzcp4j.exceptions;
 
 public class KeySupplierException extends Nzcp4jInternalException {
     public KeySupplierException(final String message, final Throwable cause) {

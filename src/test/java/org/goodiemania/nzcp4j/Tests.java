@@ -3,10 +3,11 @@ package org.goodiemania.nzcp4j;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
-import org.goodiemania.nzcp4j.exception.BadSignatureException;
-import org.goodiemania.nzcp4j.exception.ExpiredPassException;
-import org.goodiemania.nzcp4j.exception.InactivePassException;
-import org.goodiemania.nzcp4j.exception.UnknownIssuerException;
+import org.goodiemania.nzcp4j.exceptions.BadSignatureException;
+import org.goodiemania.nzcp4j.exceptions.ExpiredPassException;
+import org.goodiemania.nzcp4j.exceptions.InactivePassException;
+import org.goodiemania.nzcp4j.exceptions.Nzcp4JException;
+import org.goodiemania.nzcp4j.exceptions.UnknownIssuerException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

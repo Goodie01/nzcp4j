@@ -1,7 +1,6 @@
-package org.goodiemania.nzcp4j.exception;
+package org.goodiemania.nzcp4j.exceptions;
 
 import java.time.LocalDateTime;
-import org.goodiemania.nzcp4j.InvalidPassException;
 
 public class InactivePassException extends InvalidPassException {
     public InactivePassException(LocalDateTime localDateTime) {

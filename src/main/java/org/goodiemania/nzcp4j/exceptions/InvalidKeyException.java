@@ -1,6 +1,4 @@
-package org.goodiemania.nzcp4j.exception;
-
-import org.goodiemania.nzcp4j.InvalidPassException;
+package org.goodiemania.nzcp4j.exceptions;
 
 public class InvalidKeyException extends InvalidPassException {
 

@@ -2,8 +2,8 @@ package org.goodiemania.nzcp4j.impl;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.goodiemania.nzcp4j.Nzcp4JException;
-import org.goodiemania.nzcp4j.exception.InvalidFormatException;
+import org.goodiemania.nzcp4j.exceptions.Nzcp4JException;
+import org.goodiemania.nzcp4j.exceptions.InvalidFormatException;
 import org.goodiemania.nzcp4j.impl.entities.ExtractedCovidPassDetails;
 
 public class RawStringExtractor {

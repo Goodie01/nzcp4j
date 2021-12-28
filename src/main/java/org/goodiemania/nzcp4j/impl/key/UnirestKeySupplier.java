@@ -2,7 +2,7 @@ package org.goodiemania.nzcp4j.impl.key;
 
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import org.goodiemania.nzcp4j.exception.KeySupplierException;
+import org.goodiemania.nzcp4j.exceptions.KeySupplierException;
 
 public class UnirestKeySupplier implements KeySupplier {
     @Override

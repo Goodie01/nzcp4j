@@ -1,4 +1,4 @@
-package org.goodiemania.nzcp4j;
+package org.goodiemania.nzcp4j.exceptions;
 
 /**
  * Root exception

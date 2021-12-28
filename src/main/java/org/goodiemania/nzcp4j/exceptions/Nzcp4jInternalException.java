@@ -1,4 +1,4 @@
-package org.goodiemania.nzcp4j;
+package org.goodiemania.nzcp4j.exceptions;
 
 /**
  * This exception is the root exception for everything related to an internal issue
