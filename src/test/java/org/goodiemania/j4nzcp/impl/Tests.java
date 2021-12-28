@@ -47,7 +47,7 @@ public class Tests {
     }
 
     @Test
-    void bad_public_key() throws Nzcp4JException {
+    void bad_public_key() {
         Verifier verifier = Verifier.builder()
             .addTrustedIssuer("nzcp.covid19.health.nz")
             .build();
@@ -56,7 +56,7 @@ public class Tests {
     }
 
     @Test
-    void public_key_not_found() throws Nzcp4JException {
+    void public_key_not_found() {
         Verifier verifier = Verifier.builder()
             .addTrustedIssuer("nzcp.covid19.health.nz")
             .build();
@@ -65,7 +65,7 @@ public class Tests {
     }
 
     @Test
-    void modified_signature() throws Nzcp4JException {
+    void modified_signature() {
         Verifier verifier = Verifier.builder()
             .addTrustedIssuer("nzcp.covid19.health.nz")
             .build();
@@ -74,7 +74,7 @@ public class Tests {
     }
 
     @Test
-    void modified_payload() throws Nzcp4JException {
+    void modified_payload() {
         Verifier verifier = Verifier.builder()
             .addTrustedIssuer("nzcp.covid19.health.nz")
             .build();
@@ -83,7 +83,7 @@ public class Tests {
     }
 
     @Test
-    void expired_pass() throws Nzcp4JException {
+    void expired_pass() {
         Verifier verifier = Verifier.builder()
             .addTrustedIssuer("nzcp.covid19.health.nz")
             .build();
@@ -92,7 +92,7 @@ public class Tests {
     }
 
     @Test
-    void not_active_pass() throws Nzcp4JException {
+    void not_active_pass() {
         Verifier verifier = Verifier.builder()
             .addTrustedIssuer("nzcp.covid19.health.nz")
             .build();

@@ -99,10 +99,10 @@ public class CovidPassExtractor {
             VerifiableClaims verifiableClaims = parseVerifiableClaims(payloadBody.get(VC));
 
             return new Payload(iss,
-                    LocalDateTime.ofEpochSecond(notBefore, 0, ZoneOffset.ofHours(13)),
-                    LocalDateTime.ofEpochSecond(expiry, 0, ZoneOffset.ofHours(13)),
-                    uuid,
-                    verifiableClaims);
+                LocalDateTime.ofEpochSecond(notBefore, 0, ZoneOffset.ofHours(13)),
+                LocalDateTime.ofEpochSecond(expiry, 0, ZoneOffset.ofHours(13)),
+                uuid,
+                verifiableClaims);
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
@@ -123,20 +123,20 @@ public class CovidPassExtractor {
 
     private VerifiableClaims parseVerifiableClaims(final JsonNode verifiableClaimsNode) {
         List<String> contextList = convertToList(verifiableClaimsNode.get(CONTEXT))
-                .stream()
-                .map(JsonNode::textValue)
-                .toList();
+            .stream()
+            .map(JsonNode::textValue)
+            .toList();
         String version = verifiableClaimsNode.get(VERSION).textValue();
         List<String> type = convertToList(verifiableClaimsNode.get(TYPE))
-                .stream()
-                .map(JsonNode::textValue)
-                .toList();
+            .stream()
+            .map(JsonNode::textValue)
+            .toList();
         CredentialSubject credential = parseCredentials(verifiableClaimsNode.get(CREDENTIAL_SUBJECT));
 
         return new VerifiableClaims(contextList,
-                version,
-                type,
-                credential);
+            version,
+            type,
+            credential);
     }
 
     private CredentialSubject parseCredentials(final JsonNode credentialsNode) {

@@ -3,7 +3,7 @@ package org.goodiemania.j4nzcp;
 /**
  * Root exception
  */
-public abstract class Nzcp4JException extends Exception{
+public abstract class Nzcp4JException extends Exception {
     private String url;
 
     public Nzcp4JException(final String message, final String url) {

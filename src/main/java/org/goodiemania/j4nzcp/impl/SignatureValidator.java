@@ -3,16 +3,6 @@ package org.goodiemania.j4nzcp.impl;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper;
-import org.bouncycastle.asn1.ASN1Integer;
-import org.bouncycastle.asn1.DERSequenceGenerator;
-import org.goodiemania.j4nzcp.Nzcp4JException;
-import org.goodiemania.j4nzcp.exception.BadSignatureException;
-import org.goodiemania.j4nzcp.impl.entities.NewZealandCovidPass;
-import org.goodiemania.j4nzcp.impl.entities.PublicKeysDetails;
-import org.goodiemania.j4nzcp.impl.issuer.IssuerExtractor;
-import org.goodiemania.j4nzcp.impl.key.KeySupplier;
-import org.goodiemania.j4nzcp.impl.key.UnirestKeySupplier;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -33,15 +23,23 @@ import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Locale;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.DERSequenceGenerator;
+import org.goodiemania.j4nzcp.Nzcp4JException;
+import org.goodiemania.j4nzcp.exception.BadSignatureException;
+import org.goodiemania.j4nzcp.impl.entities.NewZealandCovidPass;
+import org.goodiemania.j4nzcp.impl.entities.PublicKeysDetails;
+import org.goodiemania.j4nzcp.impl.issuer.IssuerExtractor;
+import org.goodiemania.j4nzcp.impl.key.KeyProcessor;
 
 public class SignatureValidator {
     private final IssuerExtractor ISSUER_EXTRACTOR = new IssuerExtractor();
     private static final CBORMapper CBOR_MAPPER = new CBORMapper();
 
-    private final KeySupplier keySupplier;
+    private final KeyProcessor keySupplier;
 
     public SignatureValidator() {
-        keySupplier = new UnirestKeySupplier();
+        keySupplier = new KeyProcessor();
     }
 
     public void validate(final NewZealandCovidPass covidPass) throws Nzcp4JException {

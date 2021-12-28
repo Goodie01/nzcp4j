@@ -5,7 +5,7 @@ import org.goodiemania.j4nzcp.impl.entities.NewZealandCovidPass;
 
 /**
  * The goal of this class is to know convert a given pass info into just the domain of the issuer
- *
+ * <p>
  * We take something like this "did:web:nzcp.covid19.health.nz"
  * validate it starts with "did:web:"
  * and return "nzcp.covid19.health.nz"
@@ -15,7 +15,7 @@ public class IssuerExtractor {
 
     public String extractIssuer(final NewZealandCovidPass covidPass) throws InvalidIssuerFormatException {
         String issuer = covidPass.payload().iss();
-        if(!issuer.startsWith(ISSUER_TEXT)) {
+        if (!issuer.startsWith(ISSUER_TEXT)) {
             throw new InvalidIssuerFormatException(issuer);
         }
 

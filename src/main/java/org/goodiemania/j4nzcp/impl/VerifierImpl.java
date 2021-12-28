@@ -1,7 +1,6 @@
 package org.goodiemania.j4nzcp.impl;
 
 import java.util.Set;
-
 import org.goodiemania.j4nzcp.Nzcp4JException;
 import org.goodiemania.j4nzcp.VerificationResult;
 import org.goodiemania.j4nzcp.Verifier;
@@ -9,7 +8,6 @@ import org.goodiemania.j4nzcp.exception.InvalidVersionException;
 import org.goodiemania.j4nzcp.impl.entities.ExtractedCovidPassDetails;
 import org.goodiemania.j4nzcp.impl.entities.NewZealandCovidPass;
 import org.goodiemania.j4nzcp.impl.key.KeySupplier;
-import org.goodiemania.j4nzcp.impl.key.UnirestKeySupplier;
 
 public class VerifierImpl implements Verifier {
     private static final String VERSION_ONE = "1";
@@ -41,11 +39,11 @@ public class VerifierImpl implements Verifier {
             SIGNATURE_VALIDATOR.validate(pass);
 
             return new VerificationResult(
-                    pass.payload().vc().credentials().givenName(),
-                    pass.payload().vc().credentials().familyName(),
-                    pass.payload().vc().credentials().dob(),
-                    pass.payload().notBefore(),
-                    pass.payload().expiry()
+                pass.payload().vc().credentials().givenName(),
+                pass.payload().vc().credentials().familyName(),
+                pass.payload().vc().credentials().dob(),
+                pass.payload().notBefore(),
+                pass.payload().expiry()
             );
         } else {
             throw new InvalidVersionException(version);
