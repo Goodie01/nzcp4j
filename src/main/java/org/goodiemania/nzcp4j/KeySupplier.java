@@ -1,4 +1,4 @@
-package org.goodiemania.nzcp4j.impl.key;
+package org.goodiemania.nzcp4j;
 
 import org.goodiemania.nzcp4j.exceptions.KeySupplierException;
 

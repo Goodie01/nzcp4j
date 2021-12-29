@@ -37,12 +37,6 @@
             <artifactId>jackson-dataformat-cbor</artifactId>
             <version>2.13.0</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.mashape.unirest/unirest-java -->
-        <dependency>
-            <groupId>com.mashape.unirest</groupId>
-            <artifactId>unirest-java</artifactId>
-            <version>1.4.9</version>
-        </dependency>
         <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on -->
         <dependency>
             <groupId>org.bouncycastle</groupId>

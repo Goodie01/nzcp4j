@@ -3,6 +3,7 @@ package org.goodiemania.nzcp4j.impl;
 import org.goodiemania.nzcp4j.exceptions.Nzcp4JException;
 import org.goodiemania.nzcp4j.impl.entities.ExtractedCovidPassDetails;
 import org.goodiemania.nzcp4j.impl.entities.NewZealandCovidPass;
+import org.goodiemania.nzcp4j.impl.key.OfflineStaticKeySupplier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,6 +22,6 @@ class SignatureValidatorTest {
 
     @Test
     void test1() throws Exception{
-        new SignatureValidator().validate(pass);
+        new SignatureValidator(new OfflineStaticKeySupplier()).validate(pass);
     }
 }

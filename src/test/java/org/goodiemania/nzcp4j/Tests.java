@@ -1,7 +1,9 @@
 package org.goodiemania.nzcp4j;
 
+import java.net.ProxySelector;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Random;
 import java.util.Set;
 import org.goodiemania.nzcp4j.exceptions.BadSignatureException;
 import org.goodiemania.nzcp4j.exceptions.ExpiredPassException;
@@ -24,6 +26,24 @@ public class Tests {
     void valid_pass() throws Nzcp4JException {
         Verifier verifier = Verifier.builder()
             .addTrustedIssuer("nzcp.covid19.health.nz")
+            .build();
+
+        VerificationResult result = verifier.verify(VALID_PASS);
+
+        Assertions.assertEquals("Jack", result.givenName());
+        Assertions.assertEquals("Sparrow", result.familyName());
+        Assertions.assertEquals(LocalDate.of(1960, 4, 16), result.dob());
+        Assertions.assertEquals(LocalDateTime.of(2021, 11, 3, 9, 5, 30), result.notBefore());
+        Assertions.assertEquals(LocalDateTime.of(2031, 11, 3, 9, 5, 30), result.expiry());
+    }
+
+    @Test
+    void valid_pass_test() throws Nzcp4JException {
+        ProxySelector proxy = new Random().nextInt() == 1 ? null : ProxySelector.getDefault();
+
+        Verifier verifier = Verifier.builder()
+            .addTrustedIssuer("nzcp.covid19.health.nz")
+            .apply(verifierBuilder -> { if(proxy != null) { verifierBuilder.setOnlineProxy(proxy); }})
             .build();
 
         VerificationResult result = verifier.verify(VALID_PASS);

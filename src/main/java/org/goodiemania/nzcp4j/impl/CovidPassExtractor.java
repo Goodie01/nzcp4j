@@ -9,8 +9,6 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.commons.codec.binary.Base32;
-import org.apache.commons.codec.binary.Hex;
 import org.goodiemania.nzcp4j.impl.entities.CredentialSubject;
 import org.goodiemania.nzcp4j.impl.entities.NewZealandCovidPass;
 import org.goodiemania.nzcp4j.impl.entities.Payload;
@@ -33,12 +31,11 @@ import static org.goodiemania.nzcp4j.impl.data.VerifiableClaimTags.VC;
 import static org.goodiemania.nzcp4j.impl.data.VerifiableClaimTags.VERSION;
 
 public class CovidPassExtractor {
-    private static final Base32 BASE32_ENCODER = new Base32();
     private static final CBORMapper CBOR_MAPPER = new CBORMapper();
 
     public NewZealandCovidPass extract(final String cwtValue) {
         try {
-            byte[] decode = BASE32_ENCODER.decode(addPadding(cwtValue));
+            byte[] decode = Base32.decode(addPadding(cwtValue));
             JsonNode cborObject = getInitialJsonNode(decode);
             byte[] headerValue = cborObject.get(0).binaryValue();
             byte[] payloadValue = cborObject.get(2).binaryValue();
@@ -109,7 +106,7 @@ public class CovidPassExtractor {
     }
 
     private String extractJtiString(final byte[] bytes) {
-        String hexUuid = Hex.encodeHexString(bytes);
+        String hexUuid = encodeHexString(bytes);
 
         String timeLow = hexUuid.substring(0, 8);
         String timeMid = hexUuid.substring(8, 12);
@@ -120,6 +117,15 @@ public class CovidPassExtractor {
 
         return "urn:uuid:" + timeLow + "-" + timeMid + "-" + timeHighAndVersion + "-" + clockSeqAndReserved + clockSeqLow + "-" + node;
     }
+
+    private String encodeHexString(final byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02X", b));
+        }
+        return sb.toString();
+    }
+
 
     private VerifiableClaims parseVerifiableClaims(final JsonNode verifiableClaimsNode) {
         List<String> contextList = convertToList(verifiableClaimsNode.get(CONTEXT))

@@ -31,6 +31,7 @@ import org.goodiemania.nzcp4j.impl.entities.NewZealandCovidPass;
 import org.goodiemania.nzcp4j.impl.entities.PublicKeysDetails;
 import org.goodiemania.nzcp4j.impl.issuer.IssuerExtractor;
 import org.goodiemania.nzcp4j.impl.key.KeyProcessor;
+import org.goodiemania.nzcp4j.KeySupplier;
 
 public class SignatureValidator {
     private final IssuerExtractor ISSUER_EXTRACTOR = new IssuerExtractor();
@@ -38,8 +39,8 @@ public class SignatureValidator {
 
     private final KeyProcessor keySupplier;
 
-    public SignatureValidator() {
-        keySupplier = new KeyProcessor();
+    public SignatureValidator(final KeySupplier keySupplier) {
+        this.keySupplier = new KeyProcessor(keySupplier);
     }
 
     public void validate(final NewZealandCovidPass covidPass) throws Nzcp4JException {

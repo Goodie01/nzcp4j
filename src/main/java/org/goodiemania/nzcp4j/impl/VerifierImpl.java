@@ -7,7 +7,7 @@ import org.goodiemania.nzcp4j.Verifier;
 import org.goodiemania.nzcp4j.exceptions.InvalidVersionException;
 import org.goodiemania.nzcp4j.impl.entities.ExtractedCovidPassDetails;
 import org.goodiemania.nzcp4j.impl.entities.NewZealandCovidPass;
-import org.goodiemania.nzcp4j.impl.key.KeySupplier;
+import org.goodiemania.nzcp4j.KeySupplier;
 
 public class VerifierImpl implements Verifier {
     private static final String VERSION_ONE = "1";
@@ -16,12 +16,12 @@ public class VerifierImpl implements Verifier {
     private final CovidPassValidator COVID_PASS_VALIDATOR;
     private final SignatureValidator SIGNATURE_VALIDATOR;
 
-    public VerifierImpl(Set<String> trustedIssuers, KeySupplier unirestKeySupplier) {
+    public VerifierImpl(Set<String> trustedIssuers, KeySupplier keySupplier) {
         try {
             RAW_STRING_EXTRACTOR = new RawStringExtractor();
             COVID_PASS_EXTRACTOR = new CovidPassExtractor();
             COVID_PASS_VALIDATOR = new CovidPassValidator(trustedIssuers);
-            SIGNATURE_VALIDATOR = new SignatureValidator();
+            SIGNATURE_VALIDATOR = new SignatureValidator(keySupplier);
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }

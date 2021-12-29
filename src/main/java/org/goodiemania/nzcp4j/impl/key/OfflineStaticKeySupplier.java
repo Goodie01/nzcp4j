@@ -1,5 +1,6 @@
 package org.goodiemania.nzcp4j.impl.key;
 
+import org.goodiemania.nzcp4j.KeySupplier;
 import org.goodiemania.nzcp4j.exceptions.KeySupplierException;
 
 public class OfflineStaticKeySupplier implements KeySupplier {
