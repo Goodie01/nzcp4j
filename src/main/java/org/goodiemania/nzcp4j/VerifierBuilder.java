@@ -98,7 +98,6 @@ public class VerifierBuilder {
      * @param proxyHost Host of the proxy
      * @param proxyPort Port of the proxy
      * @return this builder
-     * @implNote Constructs an instance of proxy selector and calls an overloaded method.
      */
     public VerifierBuilder setOnlineProxy(final String proxyHost, final int proxyPort) {
         return setOnlineProxy(ProxySelector.of(new InetSocketAddress(proxyHost, proxyPort)));
@@ -124,7 +123,6 @@ public class VerifierBuilder {
      *
      * @param cacheResult Whether to cache the online result
      * @return this builder
-     * @implNote Constructs an instance of proxy selector and calls an overloaded method.
      */
     public VerifierBuilder cacheOnlineResult(final boolean cacheResult) {
         onlineCacheResult = cacheResult;

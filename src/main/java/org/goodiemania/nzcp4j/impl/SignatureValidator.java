@@ -103,7 +103,7 @@ public class SignatureValidator {
         return CBOR_MAPPER.writeValueAsBytes(objectNode);
     }
 
-    private byte[] buildSignature(byte[] concat) throws BadSignatureException {
+    private byte[] buildSignature(byte[] concat) throws Nzcp4JException {
         try {
             int len = concat.length / 2;
             byte[] r = Arrays.copyOfRange(concat, 0, len);
@@ -118,7 +118,7 @@ public class SignatureValidator {
 
             return outputStream.toByteArray();
         } catch (Exception e) {
-            throw new IllegalStateException("Error encountered while building signature", e);
+            throw new BadSignatureException("Error encountered while building signature", e);
         }
     }
 
